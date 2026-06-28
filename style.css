@@ -188,3 +188,56 @@ grid-template-columns:1fr;
 }
 
 }
+.categories{
+    padding:70px 10%;
+    text-align:center;
+    color:white;
+}
+
+.categories h2{
+    font-size:38px;
+    margin-bottom:15px;
+}
+
+.categories p{
+    color:#ddd;
+    margin-bottom:40px;
+}
+
+.category-container{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+}
+
+.category-card{
+    background:linear-gradient(to bottom right,#30266B,#B86AD9);
+    border-radius:15px;
+    padding:35px;
+    transition:.3s;
+    cursor:pointer;
+}
+
+.category-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 0 20px rgba(184,106,217,.5);
+}
+
+.icon{
+    font-size:42px;
+    margin-bottom:15px;
+}
+
+.category-card h3{
+    color:white;
+}
+
+@media(max-width:768px){
+
+.category-container{
+
+grid-template-columns:1fr;
+
+}
+
+}
