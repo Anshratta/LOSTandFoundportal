@@ -549,3 +549,38 @@ grid-template-columns:1fr;
 }
 
 }
+.form-section{
+    width:80%;
+    max-width:600px;
+    margin:60px auto;
+    text-align:center;
+    color:#F1E9E9;
+}
+
+.form-section h1{
+    margin-bottom:10px;
+}
+
+.form-section p{
+    margin-bottom:30px;
+}
+
+.report-form{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.report-form input,
+.report-form textarea{
+    padding:14px;
+    border:none;
+    border-radius:8px;
+    background:#ffffff;
+    font-size:16px;
+}
+
+.report-form textarea{
+    height:120px;
+    resize:none;
+}
