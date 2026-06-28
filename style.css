@@ -584,3 +584,21 @@ grid-template-columns:1fr;
     height:120px;
     resize:none;
 }
+
+.form-buttons{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:10px;
+}
+
+.report-form input:focus,
+.report-form textarea:focus{
+    outline:none;
+    border:2px solid #B86AD9;
+}
+
+.report-form input,
+.report-form textarea{
+    transition:0.3s;
+}
