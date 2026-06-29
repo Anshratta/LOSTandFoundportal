@@ -24,3 +24,30 @@ search.addEventListener("keyup", function () {
     });
 
 });
+function filterItems(type){
+
+    const items = document.querySelectorAll(".item");
+
+    items.forEach(item=>{
+
+        if(type==="all"){
+
+            item.style.display="block";
+
+        }
+
+        else if(item.classList.contains(type)){
+
+            item.style.display="block";
+
+        }
+
+        else{
+
+            item.style.display="none";
+
+        }
+
+    });
+
+}

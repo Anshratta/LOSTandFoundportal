@@ -682,3 +682,20 @@ label{
     color:#E491C9;
     font-weight:bold;
 }
+.filters{
+    margin-bottom:25px;
+}
+
+.filters button{
+    padding:10px 18px;
+    margin:5px;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+    background:#A855F7;
+    color:white;
+}
+
+.filters button:hover{
+    background:#D946EF;
+}
