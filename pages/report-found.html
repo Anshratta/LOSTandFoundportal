@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Found Item</title>
+    <title>Report Found Item – Campus Lost & Found</title>
+    <meta name="description" content="Report a found item on the Campus Lost & Found Portal.">
     <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
 
 <nav>
-
-    <div class="logo">Campus Lost & Found</div>
-
+    <div class="logo">Campus Lost &amp; Found</div>
     <ul>
         <li><a href="../index.html">Home</a></li>
         <li><a href="browse.html">Browse</a></li>
         <li><a href="report-lost.html">Lost Items</a></li>
     </ul>
-
 </nav>
 
 <section class="form-section">
@@ -29,35 +27,47 @@
 
     <p class="note">Fields marked by you help us identify the item faster.</p>
 
-    <form class="report-form">
+    <div id="form-status" style="display:none;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-weight:600;"></div>
 
-    <input type="text" placeholder="Item Name">
+    <form class="report-form" id="found-form">
 
-    <input type="text" placeholder="Category">
+        <label>Item Name</label>
+        <input type="text" id="itemName" placeholder="Item Name" required>
 
-    <input type="text" placeholder="Found Location">
+        <label>Category</label>
+        <select id="category">
+            <option value="">-- Select Category --</option>
+            <option value="Bags">Bags</option>
+            <option value="Electronics">Electronics</option>
+            <option value="ID Cards">ID Cards</option>
+            <option value="Books">Books</option>
+            <option value="Keys">Keys</option>
+            <option value="Wallets">Wallets</option>
+            <option value="Other">Other</option>
+        </select>
 
-    <input type="date">
+        <label>Found Location</label>
+        <input type="text" id="location" placeholder="e.g. Cafeteria, Parking Area" required>
 
-    <input type="tel" placeholder="Contact Number">
+        <label>Date Found</label>
+        <input type="date" id="dateFound" required>
 
-    <textarea placeholder="Description"></textarea>
+        <label>Contact Number</label>
+        <input type="tel" id="contact" placeholder="Your contact number" required>
 
-    <div class="form-buttons">
+        <label>Description</label>
+        <textarea id="description" placeholder="Describe the item (colour, brand, any marks...)"></textarea>
 
-        <button class="btn btn-primary" type="submit">
-            Submit
-        </button>
+        <div class="form-buttons">
+            <button class="btn btn-primary" type="submit" id="submit-btn">Submit</button>
+            <button class="btn btn-secondary" type="reset">Reset</button>
+        </div>
 
-        <button class="btn btn-secondary" type="reset">
-            Reset
-        </button>
-
-    </div>
-
-</form>
+    </form>
 
 </section>
+
+<script type="module" src="../script.js"></script>
 
 </body>
 </html>
