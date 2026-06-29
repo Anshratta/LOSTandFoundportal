@@ -699,3 +699,18 @@ label{
 .filters button:hover{
     background:#D946EF;
 }
+
+.item{
+    transition:.3s;
+}
+
+.item:hover{
+    transform:translateY(-5px);
+    box-shadow:0 0 10px rgba(255,255,255,.2);
+}
+
+#message{
+    color:white;
+    margin-top:20px;
+    font-size:18px;
+}
