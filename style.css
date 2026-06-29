@@ -636,3 +636,29 @@ label{
     outline:none;
     border:2px solid #B86AD9;
 }
+.browse{
+    width:90%;
+    margin:50px auto;
+    text-align:center;
+    color:white;
+}
+
+#search{
+    width:300px;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    margin:20px 0;
+}
+
+#items{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+@media(max-width:768px){
+    #items{
+        grid-template-columns:1fr;
+    }
+}
