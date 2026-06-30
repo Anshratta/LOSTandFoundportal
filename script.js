@@ -12,6 +12,27 @@ import {
 
 const path = window.location.pathname;
 
+// ── Navbar search redirection (works on any page with a navbar search input) ──
+const navSearchInput = document.querySelector(".search input");
+const navSearchBtn   = document.querySelector(".search button");
+
+if (navSearchInput) {
+    const performSearch = () => {
+        const query = navSearchInput.value.trim();
+        const prefix = window.location.pathname.includes("/pages/") ? "" : "pages/";
+        window.location.href = `${prefix}browse.html?search=${encodeURIComponent(query)}`;
+    };
+
+    if (navSearchBtn) {
+        navSearchBtn.addEventListener("click", performSearch);
+    }
+    navSearchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            performSearch();
+        }
+    });
+}
+
 
 // ================================================================
 // HOME PAGE — index.html
@@ -21,19 +42,39 @@ const path = window.location.pathname;
 if (path.endsWith("index.html") || path === "/" || path.endsWith("/LOSTandFoundportal/")) {
 
     // ── Live stats counters ──────────────────────────────────
+    const statsLost      = document.querySelector(".stats .card:nth-child(1) h2");
     const statsItems     = document.querySelector(".stats .card:nth-child(2) h2");
     const statsRecovered = document.querySelector(".stats .card:nth-child(3) h2");
 
     onSnapshot(collection(db, "items"), (snap) => {
-        if (statsItems) statsItems.textContent = snap.size;
-    });
+        const items = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    onSnapshot(
-        query(collection(db, "items"), where("status", "==", "recovered")),
-        (snap) => {
-            if (statsRecovered) statsRecovered.textContent = snap.size;
-        }
-    );
+        // 1. Items Lost: items where type is "lost"
+        const lostCount = items.filter(item => item.type === "lost").length;
+        if (statsLost) statsLost.textContent = lostCount;
+
+        // 2. Items Reported: total items in the database
+        if (statsItems) statsItems.textContent = snap.size;
+
+        // 3. Items Recovered: if the item is lost and found report both
+        const lostNames = new Set(
+            items.filter(item => item.type === "lost" && item.itemName)
+                 .map(item => item.itemName.trim().toLowerCase())
+        );
+        const foundNames = new Set(
+            items.filter(item => item.type === "found" && item.itemName)
+                 .map(item => item.itemName.trim().toLowerCase())
+        );
+
+        let recoveredCount = 0;
+        lostNames.forEach(name => {
+            if (foundNames.has(name)) {
+                recoveredCount++;
+            }
+        });
+
+        if (statsRecovered) statsRecovered.textContent = recoveredCount;
+    });
 
     // ── Latest lost items ────────────────────────────────────
     const itemsContainer = document.querySelector(".items-container");
@@ -130,17 +171,22 @@ if (path.endsWith("browse.html")) {
     let allItems     = [];
     let activeFilter = "all";
 
-    // ── Read ?category= from URL (set by category cards on home page)
+    // ── Read ?category= or ?search= from URL (set by category cards / navbar search)
     const urlParams     = new URLSearchParams(window.location.search);
     const urlCategory   = urlParams.get("category") || "";
+    const urlSearch     = urlParams.get("search") || "";
 
     const itemsDiv = document.getElementById("items");
     const message  = document.getElementById("message");
     const search   = document.getElementById("search");
 
-    // Pre-fill search box if a category was passed in the URL
-    if (urlCategory && search) {
-        search.value = urlCategory;
+    // Pre-fill search box if category or search query was passed in the URL
+    if (search) {
+        if (urlSearch) {
+            search.value = urlSearch;
+        } else if (urlCategory) {
+            search.value = urlCategory;
+        }
     }
 
     // ── Real-time Firestore listener ─────────────────────────────
