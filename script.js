@@ -51,18 +51,26 @@ if (path.endsWith("index.html") || path === "/" || path.endsWith("/LOSTandFoundp
         return `${diff} Days Ago`;
     }
 
+    // ── Fetch all items, filter & sort client-side (no composite index needed)
     onSnapshot(
-        query(
-            collection(db, "items"),
-            where("type", "==", "lost"),
-            orderBy("timestamp", "desc"),
-            limit(3)
-        ),
+        collection(db, "items"),
         (snap) => {
             if (!itemsContainer) return;
+
+            // Filter only lost items, sort by timestamp desc, take top 3
+            const lostItems = snap.docs
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .filter(item => item.type === "lost")
+                .sort((a, b) => {
+                    const ta = a.timestamp ? a.timestamp.toMillis() : 0;
+                    const tb = b.timestamp ? b.timestamp.toMillis() : 0;
+                    return tb - ta;
+                })
+                .slice(0, 3);
+
             itemsContainer.innerHTML = "";
 
-            if (snap.empty) {
+            if (lostItems.length === 0) {
                 itemsContainer.innerHTML = `
                     <p style="color:#aaa;text-align:center;width:100%;padding:20px;">
                         No lost items reported yet.
@@ -70,13 +78,12 @@ if (path.endsWith("index.html") || path === "/" || path.endsWith("/LOSTandFoundp
                 return;
             }
 
-            snap.forEach((doc) => {
-                const d    = doc.data();
+            lostItems.forEach((d) => {
                 const icon = categoryIcons[(d.category || "").toLowerCase()] || "📦";
                 const card = document.createElement("div");
                 card.className = "item-card";
 
-                // ── Safe detail button using data attributes (avoids quote-escaping bugs)
+                // Safe detail button using data attributes
                 const btn = document.createElement("button");
                 btn.className   = "view-btn";
                 btn.textContent = "View Details";
@@ -96,6 +103,15 @@ if (path.endsWith("index.html") || path === "/" || path.endsWith("/LOSTandFoundp
                 card.appendChild(btn);
                 itemsContainer.appendChild(card);
             });
+        },
+        (err) => {
+            console.error("Firestore error (latest items):", err);
+            if (itemsContainer) {
+                itemsContainer.innerHTML = `
+                    <p style="color:#f87171;text-align:center;width:100%;padding:20px;">
+                        ⚠️ Could not load items. Check your connection.
+                    </p>`;
+            }
         }
     );
 }
@@ -114,9 +130,18 @@ if (path.endsWith("browse.html")) {
     let allItems     = [];
     let activeFilter = "all";
 
+    // ── Read ?category= from URL (set by category cards on home page)
+    const urlParams     = new URLSearchParams(window.location.search);
+    const urlCategory   = urlParams.get("category") || "";
+
     const itemsDiv = document.getElementById("items");
     const message  = document.getElementById("message");
     const search   = document.getElementById("search");
+
+    // Pre-fill search box if a category was passed in the URL
+    if (urlCategory && search) {
+        search.value = urlCategory;
+    }
 
     // ── Real-time Firestore listener ─────────────────────────────
     // Fetches items and triggers the original render logic below.
