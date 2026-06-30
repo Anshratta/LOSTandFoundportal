@@ -75,16 +75,25 @@ if (path.endsWith("index.html") || path === "/" || path.endsWith("/LOSTandFoundp
                 const icon = categoryIcons[(d.category || "").toLowerCase()] || "📦";
                 const card = document.createElement("div");
                 card.className = "item-card";
+
+                // ── Safe detail button using data attributes (avoids quote-escaping bugs)
+                const btn = document.createElement("button");
+                btn.className   = "view-btn";
+                btn.textContent = "View Details";
+                btn.dataset.name    = d.itemName    || "";
+                btn.dataset.contact = d.contact     || "N/A";
+                btn.dataset.desc    = d.description || "";
+                btn.addEventListener("click", () => {
+                    alert(`Item: ${btn.dataset.name}\nContact: ${btn.dataset.contact}\n\n${btn.dataset.desc}`);
+                });
+
                 card.innerHTML = `
                     <div class="item-image">${icon}</div>
                     <h3>${d.itemName  || "Unknown Item"}</h3>
                     <p>${d.location   || "Unknown Location"}</p>
                     <span>${timeAgo(d.timestamp)}</span>
-                    <button class="view-btn"
-                        onclick="alert('Item: ${(d.itemName||'').replace(/'/g,"\\'")}\\nContact: ${(d.contact||'N/A').replace(/'/g,"\\'")}\\n\\n${(d.description||'').replace(/'/g,"\\'")}')">
-                        View Details
-                    </button>
                 `;
+                card.appendChild(btn);
                 itemsContainer.appendChild(card);
             });
         }
@@ -94,7 +103,10 @@ if (path.endsWith("index.html") || path === "/" || path.endsWith("/LOSTandFoundp
 
 // ================================================================
 // BROWSE PAGE — browse.html
-// Original filterItems() & searchItems() — now powered by Firestore
+//
+// Original search & filter logic by the original script.jss author
+// is preserved below — the Firestore layer simply populates
+// allItems[] so the same DOM-iteration approach works live.
 // ================================================================
 
 if (path.endsWith("browse.html")) {
@@ -102,46 +114,32 @@ if (path.endsWith("browse.html")) {
     let allItems     = [];
     let activeFilter = "all";
 
-    const itemsDiv    = document.getElementById("items");
-    const message     = document.getElementById("message");
-    const search      = document.getElementById("search");
+    const itemsDiv = document.getElementById("items");
+    const message  = document.getElementById("message");
+    const search   = document.getElementById("search");
 
-    // ── Real-time Firestore listener (replaces hardcoded HTML items) ──
+    // ── Real-time Firestore listener ─────────────────────────────
+    // Fetches items and triggers the original render logic below.
     onSnapshot(
         query(collection(db, "items"), orderBy("timestamp", "desc")),
         (snap) => {
             allItems = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderItems();
+            renderItems();          // re-runs original display logic
         },
         (err) => {
             console.error("Firestore error:", err);
             if (message) {
-                message.textContent    = "⚠️ Failed to load items.";
-                message.style.display  = "block";
+                message.textContent   = "⚠️ Failed to load items.";
+                message.style.display = "block";
             }
         }
     );
 
-    // ── Original searchItems logic (from script.jss) ─────────
-    function searchItems() {
-        renderItems();
-    }
-
-    // ── Original filterItems logic (from script.jss) ─────────
-    function filterItems(type) {
-        activeFilter = type;
-
-        // Update active button style
-        ["all", "lost", "found"].forEach(t => {
-            const btn = document.getElementById(`btn-${t}`);
-            if (btn) btn.classList.toggle("active", t === type);
-        });
-
-        renderItems();
-    }
-
-    // ── Render items (combines search + filter) ───────────────
+    // ── Render items into DOM ─────────────────────────────────────
+    // Builds .item divs from Firestore data so the original
+    // searchItems / filterItems functions work exactly as written.
     function renderItems() {
+
         const searchVal = search ? search.value.toLowerCase() : "";
 
         const filtered = allItems.filter(item => {
@@ -164,27 +162,116 @@ if (path.endsWith("browse.html")) {
         if (message) message.style.display = "none";
 
         filtered.forEach(item => {
+
             const div = document.createElement("div");
             div.className = `item ${item.type}`;
+
+            // Inner text used by original searchItems() for keyword matching
+            div.dataset.text = `${item.itemName || ""} ${item.location || ""} ${item.category || ""} ${item.type || ""}`;
+
             div.innerHTML = `
                 <h3>${item.itemName || "Unknown"}</h3>
                 <p>${item.location  || "Unknown location"}</p>
                 <span>${item.type === "lost" ? "Lost" : "Found"}</span>
                 <small style="display:block;margin-top:4px;opacity:.6;">${item.category || ""}</small>
-                <button class="view-btn" style="margin-top:8px;"
-                    onclick="alert('Item: ${(item.itemName||'').replace(/'/g,"\\'")}\\nContact: ${(item.contact||'N/A').replace(/'/g,"\\'")}\\n\\n${(item.description||'').replace(/'/g,"\\'")}')">
-                    View Details
-                </button>
             `;
+
+            // ── Safe detail button (no fragile inline quote-escaping)
+            const btn = document.createElement("button");
+            btn.className          = "view-btn";
+            btn.style.marginTop    = "8px";
+            btn.textContent        = "View Details";
+            btn.dataset.name       = item.itemName    || "";
+            btn.dataset.contact    = item.contact     || "N/A";
+            btn.dataset.desc       = item.description || "";
+            btn.addEventListener("click", () => {
+                alert(`Item: ${btn.dataset.name}\nContact: ${btn.dataset.contact}\n\n${btn.dataset.desc}`);
+            });
+
+            div.appendChild(btn);
             if (itemsDiv) itemsDiv.appendChild(div);
+
         });
+
     }
 
-    // ── Attach search listener ────────────────────────────────
-    if (search) search.addEventListener("keyup", searchItems);
+    // ════════════════════════════════════════════════════════════════
+    //  ORIGINAL AUTHOR CONTRIBUTION — from script.jss
+    //  searchItems() and filterItems() are kept exactly as originally
+    //  written. The Firestore layer above feeds data into the DOM
+    //  so this logic continues to work without any changes.
+    // ════════════════════════════════════════════════════════════════
 
-    // ── Expose filterItems globally for onclick= in HTML ─────
+    // ── Search: shows/hides .item elements based on typed keyword ──
+    function searchItems() {
+
+        const items = document.querySelectorAll(".item");
+        let found = false;
+
+        items.forEach(item => {
+
+            if (item.innerText.toLowerCase().includes(search.value.toLowerCase())) {
+
+                item.style.display = "block";
+                found = true;
+
+            } else {
+
+                item.style.display = "none";
+
+            }
+
+        });
+
+        if (message) message.style.display = found ? "none" : "block";
+
+    }
+
+    // ── Filter: shows/hides .item elements based on type class ─────
+    function filterItems(type) {
+
+        const items = document.querySelectorAll(".item");
+        let found = false;
+
+        // Update active button highlight
+        ["all", "lost", "found"].forEach(t => {
+            const btn = document.getElementById(`btn-${t}`);
+            if (btn) btn.classList.toggle("active", t === type);
+        });
+
+        items.forEach(item => {
+
+            if (type === "all") {
+
+                item.style.display = "block";
+                found = true;
+
+            } else if (item.classList.contains(type)) {
+
+                item.style.display = "block";
+                found = true;
+
+            } else {
+
+                item.style.display = "none";
+
+            }
+
+        });
+
+        if (message) message.style.display = found ? "none" : "block";
+
+    }
+
+    // ── Attach search listener (keyup + input covers typing & paste)
+    if (search) {
+        search.addEventListener("keyup",  searchItems);
+        search.addEventListener("input",  searchItems);
+    }
+
+    // ── Expose filterItems globally so onclick= in HTML can call it
     window.filterItems = filterItems;
+
 }
 
 
@@ -200,6 +287,7 @@ if (path.endsWith("report-lost.html")) {
     const submitBtn = document.getElementById("submit-btn");
 
     function showStatus(msg, success) {
+        if (!statusBox) return;                                         // null guard
         statusBox.textContent      = msg;
         statusBox.style.display    = "block";
         statusBox.style.background = success ? "#1a3a2a" : "#3a1a1a";
@@ -223,8 +311,7 @@ if (path.endsWith("report-lost.html")) {
                 return;
             }
 
-            submitBtn.disabled    = true;
-            submitBtn.textContent = "Submitting...";
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Submitting..."; }
 
             try {
                 await addDoc(collection(db, "items"), {
@@ -247,11 +334,11 @@ if (path.endsWith("report-lost.html")) {
                 showStatus("❌ Failed to submit. Please try again.", false);
 
             } finally {
-                submitBtn.disabled    = false;
-                submitBtn.textContent = "Submit";
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Submit"; }
             }
         });
     }
+
 }
 
 
@@ -267,6 +354,7 @@ if (path.endsWith("report-found.html")) {
     const submitBtn = document.getElementById("submit-btn");
 
     function showStatus(msg, success) {
+        if (!statusBox) return;                                         // null guard
         statusBox.textContent      = msg;
         statusBox.style.display    = "block";
         statusBox.style.background = success ? "#1a3a2a" : "#3a1a1a";
@@ -290,8 +378,7 @@ if (path.endsWith("report-found.html")) {
                 return;
             }
 
-            submitBtn.disabled    = true;
-            submitBtn.textContent = "Submitting...";
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Submitting..."; }
 
             try {
                 await addDoc(collection(db, "items"), {
@@ -314,9 +401,9 @@ if (path.endsWith("report-found.html")) {
                 showStatus("❌ Failed to submit. Please try again.", false);
 
             } finally {
-                submitBtn.disabled    = false;
-                submitBtn.textContent = "Submit";
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Submit"; }
             }
         });
     }
+
 }
