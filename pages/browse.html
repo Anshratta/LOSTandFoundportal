@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Items</title>
+    <title>Browse Items – Campus Lost & Found</title>
+    <meta name="description" content="Browse all reported lost and found items on campus.">
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
 <nav>
-    <div class="logo">Campus Lost & Found</div>
-
+    <div class="logo">Campus Lost &amp; Found</div>
     <ul>
         <li><a href="../index.html">Home</a></li>
         <li><a href="report-lost.html">Lost</a></li>
@@ -27,63 +27,22 @@
         id="search"
         placeholder="Search items..."
     >
+
     <div class="filters">
-
-    <button onclick="filterItems('all')">All</button>
-
-    <button onclick="filterItems('lost')">Lost</button>
-
-    <button onclick="filterItems('found')">Found</button>
-
-</div>
-
-   <div id="items">
-    
-
-    <div class="item lost">
-        <h3>Black Backpack</h3>
-        <p>Library</p>
-        <span>Lost</span>
+        <button id="btn-all"   class="active" onclick="filterItems('all')">All</button>
+        <button id="btn-lost"             onclick="filterItems('lost')">Lost</button>
+        <button id="btn-found"            onclick="filterItems('found')">Found</button>
     </div>
 
-    <div class="item found">
-        <h3>College ID Card</h3>
-        <p>Cafeteria</p>
-        <span>Found</span>
-    </div>
+    <div id="items"></div>
 
-    <div class="item lost">
-        <h3>Calculator</h3>
-        <p>Lab 3</p>
-        <span>Lost</span>
-    </div>
-
-    <div class="item found">
-        <h3>Wallet</h3>
-        <p>Parking Area</p>
-        <span>Found</span>
-    </div>
-
-    <div class="item lost">
-        <h3>Water Bottle</h3>
-        <p>Ground</p>
-        <span>Lost</span>
-    </div>
-
-    <div class="item found">
-        <h3>Earbuds</h3>
-        <p>Block A</p>
-        <span>Found</span>
-    </div>
-
-</div>
-<p id="message" style="display:none;">
-    No items found.
-</p>
+    <p id="message" style="display:none;color:#aaa;text-align:center;padding:20px;">
+        No items found.
+    </p>
 
 </section>
 
-<script src="../script.js"></script>
+<script type="module" src="../script.js"></script>
 
 </body>
 </html>
