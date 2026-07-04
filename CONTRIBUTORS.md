@@ -1,7 +1,7 @@
 # Contributors
 
-- Member 1 - Homepage UI
-- Member 2 - Report Forms
-- Member 3 - Browse Page
-- Member 4 - Firebase Integration
-- Member 5 - Documentation and Deployment
+- Ansh Ratta - Homepage UI
+- Arjav Maheshwari - Report Forms
+- Bhavishya Acholiya - Browse Page
+- Akshay Tondon - Firebase Integration
+- Ananya Singh - Documentation and Deployment
