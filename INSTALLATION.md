@@ -1,10 +1,11 @@
-# 🛠️ Campus Lost & Found Portal - Setup Guide
+# Campus Lost & Found Portal - Setup Guide
 
 Follow these quick steps to get the Campus Lost & Found Portal running on your local machine.
 
 ---
 
 ## 1. Clone the Project
+
 Open your terminal and clone the repository:
 ```bash
 git clone https://github.com/Anshratta/LOSTandFoundportal.git
@@ -14,6 +15,7 @@ cd LOSTandFoundportal
 ---
 
 ## 2. Configure Firebase
+
 This project uses **Firebase Firestore** to store lost and found items.
 1. Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
 2. Under **Build**, select **Firestore Database** and create a database (start in **Test Mode**).
@@ -33,10 +35,11 @@ This project uses **Firebase Firestore** to store lost and found items.
 ---
 
 ## 3. Run Locally
+
 Because this project uses ES6 Javascript modules, it **cannot** be run by opening `index.html` directly in a browser. It must run on a local server.
 
-* **Option A (VS Code)**: Install the **Live Server** extension, right-click `index.html`, and select **Open with Live Server**.
-* **Option B (Python)**: Open your terminal in the project directory and run:
+* Option A (VS Code): Install the **Live Server** extension, right-click `index.html`, and select **Open with Live Server**.
+* Option B (Python): Open your terminal in the project directory and run:
   ```bash
   python -m http.server 5500
   ```
@@ -45,6 +48,7 @@ Because this project uses ES6 Javascript modules, it **cannot** be run by openin
 ---
 
 ## 4. Deploy (Vercel)
+
 To make your portal live on the web:
 1. Push your code to a GitHub repository.
 2. Link your repository to a free [Vercel](https://vercel.com/) account for automatic hosting and deployment.
