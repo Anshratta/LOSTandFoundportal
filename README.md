@@ -4,6 +4,8 @@ A responsive web application that helps students report, browse, search, and rec
 
  Live Demo: [lost-and-foundportal.vercel.app](https://lost-and-foundportal.vercel.app/)
 
+📖 **Documentation**: [Installation Guide](INSTALLATION.md) | [Architecture Diagram](architecture-diagram.png)
+
 ---
 
 ##  Problem Statement
@@ -80,6 +82,8 @@ LOSTandFoundportal/
 │   ├── report-found.html        # Form to report a found item
 │   └── about.html                # About page
 ├── README.md
+├── INSTALLATION.md          # Simplified setup & deployment guide
+├── architecture-diagram.png # High-level system architecture diagram
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
 └── LICENSE
