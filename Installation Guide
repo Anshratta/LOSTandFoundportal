@@ -1,0 +1,65 @@
+##Installation Guide
+
+Want to run the Campus Lost & Found Portal on your own laptop? 
+Just follow these simple steps.
+
+What You Need First
+
+Git installed on your computer — download here
+VS Code (or any code editor you like)
+The Live Server extension for VS Code
+A free Google account (to create a Firebase project)
+
+That's it. No Node.js, no npm, no complicated setup — this project is built with plain HTML, CSS, and JavaScript.
+
+Step 1: Get the Code on Your Computer
+
+Open a terminal and type:
+bashgit clone https://github.com/Anshratta/LOSTandFoundportal.git
+cd LOSTandFoundportal
+This copies the project to your computer and takes you inside the project folder.
+
+Step 2: Create Your Own Firebase Project
+
+Our site uses Firebase to store all the lost and found reports. You'll need to make your own Firebase project (it's free):
+
+Go to Firebase Console
+Click "Add Project" and name it anything you like
+Click the Web icon (</>) to add a web app to your project
+Firebase will show you a small code block called firebaseConfig — copy it
+On the left menu, go to Build → Firestore Database → Create Database
+When asked, choose Start in test mode
+
+
+Step 3: Connect Firebase to the Project
+
+Open the file called firebase.js in the project folder. Replace the existing config with the one you just copied from your own Firebase project, then save the file.
+jsconst firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.firebasestorage.app",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+This one small step connects your local copy of the project to your own database.
+
+Step 4: Run the Website
+
+Here's the part a lot of people get stuck on — you cannot just double-click index.html and expect it to work. This project uses JavaScript modules, and browsers block those when you open a file directly. You need to run it through a simple local server instead.
+Easiest way — using VS Code:
+
+Open the project folder in VS Code
+Install the Live Server extension (search for it in the Extensions tab)
+Right-click on index.html → "Open with Live Server"
+Your browser will open the site automatically
+
+If you don't want to use VS Code:
+bashpython -m http.server 5500
+Then open http://localhost:5500 in your browser.
+
+Step 5: Check If It's Working
+
+Go to the Report Lost or Report Found page and submit a test item
+Open your Firebase Console → Firestore Database — you should see your test item appear there instantly
+Go to the Browse page — your test item should show up there too
